@@ -136,15 +136,15 @@
     // -------------------------------
     // 4) Mega-Sena (último sorteio)
     // -------------------------------
-    fetch("https://loteriascaixa-api.herokuapp.com/api/mega-sena/latest")
+    fetch("https://loteriascaixa-api.herokuapp.com/api/megasena/latest")
       .then(r => r.json())
-      .then(dados => {
-        document.getElementById("megasena").innerText =
-          "Mega-Sena último sorteio: " + dados.dezenas.join(", ");
-      })
-      .catch(() => {
-        document.getElementById("megasena").innerText = "Mega-Sena: erro ao carregar";
-      });
+  .then(dados => {
+    document.getElementById("megasena").innerText =
+      "Mega-Sena último sorteio: " + dados.dezenas.join(", ");
+  })
+  .catch(() => {
+    document.getElementById("megasena").innerText = "Mega-Sena: não disponível";
+  });
 
     // -------------------------------
     // 5) Notícias (usando RSS convertido em JSON via api.rss2json.com)
@@ -163,4 +163,5 @@
 
 </body>
 </html>
+
 
