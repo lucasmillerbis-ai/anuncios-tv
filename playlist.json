@@ -1,0 +1,5 @@
+[
+  { "src": "ad1.mp4", "type": "video" },
+  { "src": "ad2.jpg", "type": "image", "duration": 10 },
+  { "src": "ad3.mp4", "type": "video" }
+]

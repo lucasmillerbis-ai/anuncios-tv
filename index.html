@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+  <title>Mídia Indoor</title>
+  <style>
+    html,body{height:100%;margin:0;background:#000}
+    #video, #img { position:fixed; top:0; left:0; width:100%; height:100%; object-fit:cover; }
+    #img{display:none;}
+  </style>
+</head>
+<body>
+  <video id="video" autoplay muted playsinline></video>
+  <img id="img" alt="anúncio"/>
+
+<script>
+/*
+  index.html simples que:
+  - busca playlist.json (mesma pasta)
+  - roda vídeos/imagens em loop
+  - checa playlist a cada 20s para atualizar sem redeploy
+*/
+
+const PLAYLIST_URL = 'playlist.json';
+let playlist = [];
+let idx = 0;
+const videoEl = document.getElementById('video');
+const imgEl = document.getElementById('img');
+let imgTimer = null;
+
+async function fetchPlaylist(){
+  try{
+    const res = await fetch(PLAYLIST_URL + '?_=' + Date.now(), {cache:'no-store'});
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    // troca só se diferente
+    if(JSON.stringify(data) !== JSON.stringify(playlist)){
+      playlist = data;
+      idx = 0;
+      console.log('playlist atualizada', playlist);
+      playCurrent();
+    }
+  }catch(e){
+    console.warn('não conseguiu buscar playlist:', e);
+  }
+}
+
+function playCurrent(){
+  if(!playlist || playlist.length === 0){
+    videoEl.style.display='none';
+    imgEl.style.display='none';
+    return;
+  }
+  const item = playlist[idx % playlist.length];
+  if(!item) return;
+  const src = item.src;
+  const low = src.toLowerCase();
+  if(item.type === 'image' || low.match(/\.(jpg|jpeg|png|gif)$/)){
+    playImage(item);
+  } else {
+    playVideo(item);
+  }
+}
+
+function playVideo(item){
+  clearImageTimer();
+  imgEl.style.display = 'none';
+  videoEl.style.display = 'block';
+  videoEl.pause();
+  videoEl.src = item.src;
+  videoEl.currentTime = 0;
+  videoEl.play().catch(err => {
+    console.warn('erro ao tocar vídeo:', err);
+    next();
+  });
+}
+
+function playImage(item){
+  videoEl.pause();
+  videoEl.style.display = 'none';
+  imgEl.style.display = 'block';
+  imgEl.src = item.src;
+  const duration = item.duration || 8; // segundos padrão
+  imgTimer = setTimeout(() => next(), duration * 1000);
+}
+
+function clearImageTimer(){ if(imgTimer){ clearTimeout(imgTimer); imgTimer = null; } }
+
+function next(){
+  idx = (idx + 1) % (playlist.length || 1);
+  playCurrent();
+}
+
+videoEl.addEventListener('ended', () => next());
+videoEl.addEventListener('error', () => { console.warn('video error'); next(); });
+imgEl.addEventListener('error', () => { console.warn('img error'); next(); });
+
+// primeira carga e polling
+fetchPlaylist();
+setInterval(fetchPlaylist, 20000); // busca playlist a cada 20s
+
+// reload forçado a cada 6h (fallback)
+setInterval(()=> location.reload(), 1000 * 60 * 60 * 6);
+</script>
+</body>
+</html>
