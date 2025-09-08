@@ -150,20 +150,38 @@
     // -------------------------------
     // 5) Notícias (usando RSS convertido em JSON via api.rss2json.com)
     // -------------------------------
-    fetch("https://api.rss2json.com/v1/api.json?rss_url=https://g1.globo.com/rss/g1/")
-      .then(r => r.json())
-      .then(dados => {
-        const manchetes = dados.items.slice(0, 5).map(n => n.title).join(" • ");
-        document.getElementById("news").innerHTML = "<span>" + manchetes + "</span>";
-      })
-      .catch(() => {
-        document.getElementById("news").innerHTML = "<span>Erro ao carregar notícias</span>";
-      });
+    async function carregarNoticias() {
+  try {
+    const urls = [
+      "https://api.rss2json.com/v1/api.json?rss_url=https://g1.globo.com/rss/g1/rj/norte-fluminense/",
+      "https://api.rss2json.com/v1/api.json?rss_url=https://g1.globo.com/rss/g1/rio-de-janeiro/"
+    ];
+
+    let manchetes = [];
+
+    for (let url of urls) {
+      const r = await fetch(url);
+      const dados = await r.json();
+      // pega 3 notícias de cada feed
+      manchetes.push(...dados.items.slice(0, 3).map(n => n.title));
+    }
+
+    document.getElementById("news").innerHTML =
+      "<span>" + manchetes.join(" • ") + "</span>";
+  } catch (e) {
+    document.getElementById("news").innerHTML =
+      "<span>Erro ao carregar notícias</span>";
+  }
+}
+
+// chama a função
+carregarNoticias();
 
   </script>
 
 </body>
 </html>
+
 
 
 
