@@ -1,6 +1,7 @@
 [
   { "src": "ad1.mp4", "type": "video" },
   { "src": "ad2.jpg", "type": "image", "duration": 10 },
-  { "src": "ad3.png", "type": image", "duration": 10 },
+  { "src": "ad3.jpg", "type": "image", "duration": 10 },
 { "src": "ad4.png", "type": "image", "duration": 10 },
 ]
+
