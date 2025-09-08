@@ -123,7 +123,7 @@
     // 3) Previsão do tempo (OpenWeatherMap)
     //    Troque "SUA_CHAVE_AQUI" pela sua API key gratuita
     // -------------------------------
-    fetch("https://api.openweathermap.org/data/2.5/weather?q=Rio de Janeiro&units=metric&lang=pt_br&appid=SUA_CHAVE_AQUI")
+    fetch("https://api.openweathermap.org/data/2.5/weather?q=Rio de Janeiro&units=metric&lang=pt_br&appid=c7296395a29b7135070ba6fd3c342cd0")
       .then(r => r.json())
       .then(dados => {
         document.getElementById("tempo").innerText =
@@ -163,3 +163,4 @@
 
 </body>
 </html>
+
