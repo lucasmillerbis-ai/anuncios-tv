@@ -123,67 +123,69 @@
     // 3) Previsão do tempo (OpenWeatherMap)
     //    Troque "SUA_CHAVE_AQUI" pela sua API key gratuita
     // -------------------------------
-   fetch("https://api.openweathermap.org/data/2.5/weather?lat=-21.7622&lon=-41.31819&units=metric&lang=pt_br&appid=c7296395a29b7135070ba6fd3c342cd0")
-  .then(r => r.json())
-  .then(dados => {
-    document.getElementById("tempo").innerText =
-      `Tempo: ${dados.weather[0].description}, ${dados.main.temp}°C`;
-  })
-  .catch(() => {
-    document.getElementById("tempo").innerText = "Tempo: não disponível";
-  });
-
+    fetch("https://api.openweathermap.org/data/2.5/weather?lat=-21.7622&lon=-41.31819&units=metric&lang=pt_br&appid=c7296395a29b7135070ba6fd3c342cd0")
+      .then(r => r.json())
+      .then(dados => {
+        document.getElementById("tempo").innerText =
+          `Tempo: ${dados.weather[0].description}, ${dados.main.temp}°C`;
+      })
+      .catch(() => {
+        document.getElementById("tempo").innerText = "Tempo: não disponível";
+      });
 
     // -------------------------------
     // 4) Mega-Sena (último sorteio)
     // -------------------------------
     fetch("https://loteriascaixa-api.herokuapp.com/api/megasena/latest")
       .then(r => r.json())
-  .then(dados => {
-    document.getElementById("megasena").innerText =
-      "Mega-Sena último sorteio: " + dados.dezenas.join(", ");
-  })
-  .catch(() => {
-    document.getElementById("megasena").innerText = "Mega-Sena: não disponível";
-  });
+      .then(dados => {
+        document.getElementById("megasena").innerText =
+          "Mega-Sena último sorteio: " + dados.dezenas.join(", ");
+      })
+      .catch(() => {
+        document.getElementById("megasena").innerText = "Mega-Sena: não disponível";
+      });
 
     // -------------------------------
-    // 5) Notícias (usando RSS convertido em JSON via api.rss2json.com)
+    // 5) Notícias (RSS filtradas por Campos dos Goytacazes)
     // -------------------------------
     async function carregarNoticias() {
-  try {
-    const urls = [
-      "https://api.rss2json.com/v1/api.json?rss_url=https://g1.globo.com/rss/g1/rj/norte-fluminense/",
-      "https://api.rss2json.com/v1/api.json?rss_url=https://g1.globo.com/rss/g1/rio-de-janeiro/"
-    ];
+      try {
+        const urls = [
+          "https://api.rss2json.com/v1/api.json?rss_url=https://g1.globo.com/rss/g1/rj/norte-fluminense/",
+          "https://api.rss2json.com/v1/api.json?rss_url=https://g1.globo.com/rss/g1/rio-de-janeiro/"
+        ];
 
-    let manchetes = [];
+        let manchetes = [];
 
-    for (let url of urls) {
-      const r = await fetch(url);
-      const dados = await r.json();
-      // pega 3 notícias de cada feed
-      manchetes.push(...dados.items.slice(0, 3).map(n => n.title));
+        for (let url of urls) {
+          const r = await fetch(url);
+          const dados = await r.json();
+          manchetes.push(...dados.items
+            .filter(n => n.title.includes("Campos dos Goytacazes") || n.title.includes("Campos"))
+            .slice(0, 3)
+            .map(n => n.title)
+          );
+        }
+
+        if (manchetes.length === 0) {
+          manchetes.push("Nenhuma notícia recente de Campos dos Goytacazes.");
+        }
+
+        document.getElementById("news").innerHTML =
+          "<span>" + manchetes.join(" • ") + "</span>";
+      } catch (e) {
+        document.getElementById("news").innerHTML =
+          "<span>Erro ao carregar notícias</span>";
+      }
     }
 
-    document.getElementById("news").innerHTML =
-      "<span>" + manchetes.join(" • ") + "</span>";
-  } catch (e) {
-    document.getElementById("news").innerHTML =
-      "<span>Erro ao carregar notícias</span>";
-  }
-}
-
-// chama a função
-carregarNoticias();
+    // chama a função inicialmente
+    carregarNoticias();
+    // atualiza a cada 10 minutos
+    setInterval(carregarNoticias, 10 * 60 * 1000);
 
   </script>
 
 </body>
 </html>
-
-
-
-
-
-
