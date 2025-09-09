@@ -11,6 +11,8 @@
       font-family: Arial, sans-serif;
       overflow: hidden;
     }
+
+    /* Área do player */
     #player {
       width: 100%;
       height: 80vh;
@@ -19,18 +21,30 @@
       justify-content: center;
       background: black;
     }
+
+    /* Garante que vídeo e imagens não cortem nas laterais */
+    #player video,
+    #player img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain; /* mostra tudo sem cortar */
+      background: black;   /* barras pretas se sobrar espaço */
+    }
+
+    /* Faixa inferior com infos */
     #infos {
-  height: 20vh;
-  padding: 10px;
-  box-sizing: border-box;
-  /* Degradê do vermelho para transparente */
-  background: linear-gradient(to top, rgba(255,0,0,0.8), rgba(0,0,0,0));
-  font-size: 18px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  color: white; /* Letras brancas */
-}
+      height: 20vh;
+      padding: 10px;
+      box-sizing: border-box;
+      background: linear-gradient(to top, rgba(255,0,0,0.8), rgba(0,0,0,0));
+      font-size: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      color: white; /* Letras brancas */
+    }
+
+    /* Notícias com animação */
     #news {
       margin-top: 10px;
       white-space: nowrap;
@@ -40,7 +54,7 @@
     #news span {
       display: inline-block;
       padding-left: 100%;
-      animation: marquee 90s linear infinite; /* Velocidade ajustada para 90 segundos */
+      animation: marquee 90s linear infinite; /* Velocidade ajustada */
     }
     @keyframes marquee {
       from { transform: translateX(0%); }
@@ -89,8 +103,6 @@
         video.autoplay = true;
         video.controls = false;
         video.muted = true;
-        video.style.width = "100%";
-        video.style.height = "100%";
         video.onended = () => {
           current = (current + 1) % playlist.length;
           playNext();
@@ -100,8 +112,6 @@
       } else if (item.type === "image") {
         const img = document.createElement("img");
         img.src = item.src;
-        img.style.maxWidth = "100%";
-        img.style.maxHeight = "100%";
         player.appendChild(img);
         setTimeout(() => {
           current = (current + 1) % playlist.length;
@@ -190,4 +200,3 @@
 
 </body>
 </html>
-
