@@ -12,41 +12,47 @@
       overflow: hidden;
     }
 
-    /* Área do player */
+    /* Player ocupa a tela toda */
     #player {
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
-      height: 80vh;
+      height: 100%;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
+      overflow: hidden;
       background: black;
     }
 
-    /* Garante que vídeo e imagens não cortem nas laterais */
+    /* Vídeo e imagens sempre em tela cheia */
     #player video,
     #player img {
       width: 100%;
       height: 100%;
-      object-fit: contain; /* mostra tudo sem cortar */
-      background: black;   /* barras pretas se sobrar espaço */
+      object-fit: cover; /* agora preenche a tela toda */
     }
 
-    /* Faixa inferior com infos */
+    /* Faixa inferior com degradê mais discreto */
     #infos {
-      height: 20vh;
-      padding: 10px;
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 12vh; /* faixa menor */
+      padding: 10px 20px;
       box-sizing: border-box;
-      background: linear-gradient(to top, rgba(255,0,0,0.8), rgba(0,0,0,0));
+      background: linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0));
       font-size: 18px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      color: white; /* Letras brancas */
+      color: white;
     }
 
-    /* Notícias com animação */
+    /* Texto das notícias com animação */
     #news {
-      margin-top: 10px;
+      margin-top: 5px;
       white-space: nowrap;
       overflow: hidden;
       box-sizing: border-box;
@@ -54,7 +60,7 @@
     #news span {
       display: inline-block;
       padding-left: 100%;
-      animation: marquee 90s linear infinite; /* Velocidade ajustada */
+      animation: marquee 25s linear infinite; /* ajustei a velocidade */
     }
     @keyframes marquee {
       from { transform: translateX(0%); }
@@ -132,7 +138,7 @@
     }, 1000);
 
     // -------------------------------
-    // 3) Previsão do tempo (OpenWeatherMap)
+    // 3) Previsão do tempo
     // -------------------------------
     fetch("https://api.openweathermap.org/data/2.5/weather?lat=-21.7622&lon=-41.31819&units=metric&lang=pt_br&appid=c7296395a29b7135070ba6fd3c342cd0")
       .then(r => r.json())
@@ -145,7 +151,7 @@
       });
 
     // -------------------------------
-    // 4) Mega-Sena (último sorteio)
+    // 4) Mega-Sena
     // -------------------------------
     fetch("https://loteriascaixa-api.herokuapp.com/api/megasena/latest")
       .then(r => r.json())
@@ -158,7 +164,7 @@
       });
 
     // -------------------------------
-    // 5) Notícias (RSS filtradas por Campos dos Goytacazes)
+    // 5) Notícias (RSS)
     // -------------------------------
     async function carregarNoticias() {
       try {
@@ -191,11 +197,8 @@
       }
     }
 
-    // chama a função inicialmente
     carregarNoticias();
-    // atualiza a cada 10 minutos
     setInterval(carregarNoticias, 10 * 60 * 1000);
-
   </script>
 
 </body>
